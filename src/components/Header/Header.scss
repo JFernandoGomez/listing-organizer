@@ -1,0 +1,12 @@
+.header {
+    display: flex;
+
+    &__title {
+        flex: 1 1 auto;
+        text-align: left;
+    }
+
+    &__about {
+        justify-self: flex-end;
+    }
+}

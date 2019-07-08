@@ -1,0 +1,9 @@
+.list-wrapper {
+  &__container {
+      margin-top: 80px;
+
+      nav nav [role="button"] {
+        padding-left: 40px;
+      }
+  }
+}

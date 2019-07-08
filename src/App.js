@@ -1,24 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import './App.scss';
+import Header from './components/Header';
+import ListWrapper from './components/ListWrapper';
+import { initialState, ListContext } from './context/listContext';
+import { DeleteState, DeleteContext } from './context/deleteContext';
 
 function App() {
+
+  const [list, setList] = useState(initialState.startList);
+  const [itemToDelete, setItemToDelete] = useState(DeleteState.itemToDelete);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ListContext.Provider value={{ list, editList: setList }}>
+        <DeleteContext.Provider value={{ itemToDelete, setItemToDelete }} >
+          <Header />
+          <ListWrapper />
+        </DeleteContext.Provider>
+      </ListContext.Provider>
     </div>
   );
 }
