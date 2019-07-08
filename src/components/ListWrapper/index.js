@@ -14,13 +14,13 @@ export default function ListWrapper(props) {
   const { itemToDelete } = useContext(DeleteContext);
 
   const drawLists = () => {
-    return Lists.map(
+    return Lists.filter( list => list.parent === 0 ).map(
       (listSet, index) => {
         console.log(listSet);
         const isLastItem = index >= Object.keys(Lists).length - 1;
         return (
           <React.Fragment>
-            <ListContainer listInfo={listSet.items} listName={listSet.name} />
+            <ListContainer listInfo={listSet} listName={listSet.name} parent={0} />
             { !isLastItem && <Divider />}
           </React.Fragment>
         );
@@ -34,15 +34,6 @@ export default function ListWrapper(props) {
       {
         drawLists()
       }
-      {/* <List component="nav" aria-label="Secondary mailbox folders">
-        <ListItem button>
-          <ListItemText primary="Trash" />
-        </ListItem>
-        <ListItemLink href="#simple-list">
-            <ListItemText primary="Spam" />
-          </ListItemLink> 
-          
-      </List> */}
       { !!itemToDelete && <DeleteDialog /> }
       Add list button
     </Container>

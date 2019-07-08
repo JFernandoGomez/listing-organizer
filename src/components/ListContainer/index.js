@@ -13,10 +13,11 @@ import { ListContext } from '../../context/listContext';
 import { DeleteContext } from '../../context/deleteContext';
 
 
-export function ListContainer({ listInfo, listName, parent }) {
-  console.log(listInfo, listName);
+export function ListContainer({ listInfo, parent }) {
+  console.log(listInfo, listInfo.name);
 
   const [isExpanded, setExpand] = useState(false);
+  const { list:originalList } = useContext(ListContext);
 
   const handleExpand = () => {
     console.log('isExpanded', isExpanded);
@@ -24,12 +25,14 @@ export function ListContainer({ listInfo, listName, parent }) {
   }
 
   const renderList = () => {
+    if (!!listInfo && listInfo.items) {
+      console.log('listInfo ', listInfo);
 
-    if (!!listInfo && listInfo[0].items) {
-      console.log(listInfo);
-      return listInfo.map( (subList, index) => {
+      const childList = originalList.filter(item => listInfo.items.includes(item.id));
+      
+      return childList.map( (subList, index) => {
         return (
-          <ListContainer listInfo={subList.items} listName={subList.name} parent={index}/>
+          <ListContainer listInfo={subList} parent={subList.id}/>
         )
       })
     }
@@ -44,24 +47,27 @@ export function ListContainer({ listInfo, listName, parent }) {
   return (
     <List component="nav" aria-label="Main mailbox folders">
       {/* -- list Item header -- */}
-      <ListHeaderItem
-        headerName={listName}
-        isExpanded={isExpanded}
-        handleExpand={handleExpand}
-        parent={parent}
-      />
-      {isExpanded && renderList()}
+      {/* -- is header ? -- */}
+      { listInfo.items && 
+        <ListHeaderItem
+          headerName={listInfo.name}
+          isExpanded={isExpanded}
+          handleExpand={handleExpand}
+        />
+      }
+      { isExpanded && listInfo.items && renderList() }
+      {/* -- is list Item-- */}
     </List>
   );
 }
 
-export function ListHeaderItem({ headerName, handleExpand, isExpanded, parent }) {
+export function ListHeaderItem({ headerName, handleExpand, isExpanded }) {
 
   const [isEditing, toggleEditing] = useState(false);
   const { list } = useContext(ListContext);
   const { setItemToDelete } = useContext(DeleteContext);
 
-  console.log('has parent??' , parent)
+  // console.log('has parent??' , parent)
 
   const toggleEdit = () => {
     toggleEditing(!isEditing);
