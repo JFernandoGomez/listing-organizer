@@ -1,9 +1,21 @@
 .list-wrapper {
-  &__container {
-      margin-top: 80px;
+    &__container {
+        margin-top: 80px;
 
-      nav nav [role="button"] {
-        padding-left: 40px;
-      }
-  }
+        nav nav {
+					padding-left: 40px;
+
+            // [role="button"] {
+            //     padding-left: 40px;
+						// }
+
+						// .list-row__item {
+						// 	padding-left: 40px;
+						// }
+
+						// nav .list-row__item {
+						// 	padding-left: 80px;
+						// }
+				}
+    }
 }

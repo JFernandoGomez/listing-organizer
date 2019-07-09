@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.scss';
-import Header from './components/Header';
+import { Header } from './components/Header';
 import ListWrapper from './components/ListWrapper';
 import { initialState, ListContext } from './context/listContext';
 import { DeleteState, DeleteContext } from './context/deleteContext';

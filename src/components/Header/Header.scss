@@ -8,5 +8,21 @@
 
     &__about {
         justify-self: flex-end;
-    }
+	}
+
+	&__sidemenu {
+		display: flex;
+		flex-direction: column;
+		flex: 1 0 100%;
+
+		.title {
+			margin-top: 68px;
+			border-top: 1px solid rgba(0,0,0,0.1);
+		}
+
+		.thanks {
+			margin-top: auto;
+			color: rgba(0,0,0,0.3);
+		}
+	}
 }

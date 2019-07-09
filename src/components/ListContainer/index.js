@@ -6,7 +6,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
 import ListHeaderOptions from './ListHeaderOptions';
 import { ListItemEditor } from './ListItemEditor';
 import { ListContext } from '../../context/listContext';
@@ -14,102 +13,115 @@ import { DeleteContext } from '../../context/deleteContext';
 
 
 export function ListContainer({ listInfo, parent }) {
-  console.log(listInfo, listInfo.name);
+	console.log(listInfo, listInfo.name);
 
-  const [isExpanded, setExpand] = useState(false);
-  const { list:originalList } = useContext(ListContext);
+	const [isExpanded, setExpand] = useState(false);
+	const { list: originalList } = useContext(ListContext);
 
-  const handleExpand = () => {
-    console.log('isExpanded', isExpanded);
-    setExpand(!isExpanded);
-  }
+	if(listInfo.deleted){
+		return null;
+	}
 
-  const renderList = () => {
-    if (!!listInfo && listInfo.items) {
-      console.log('listInfo ', listInfo);
+	const handleExpand = (value) => {
+		setExpand(value === true ? value : !isExpanded);
+	}
 
-      const childList = originalList.filter(item => listInfo.items.includes(item.id));
-      
-      return childList.map( (subList, index) => {
-        return (
-          <ListContainer listInfo={subList} parent={subList.id}/>
-        )
-      })
-    }
+	const renderList = () => {
+		if (!!listInfo && listInfo.items) {
 
-    return listInfo.map( item => 
-      <ListItem button >
-        <ListItemText inset primary={item} />
-      </ListItem>
-    )
-  }
+			const childList = originalList.filter( item => listInfo.items.includes(item.id) && !listInfo.deleted );
 
-  return (
-    <List component="nav" aria-label="Main mailbox folders">
-      {/* -- list Item header -- */}
-      {/* -- is header ? -- */}
-      { listInfo.items && 
-        <ListHeaderItem
-          headerName={listInfo.name}
-          isExpanded={isExpanded}
-          handleExpand={handleExpand}
-        />
-      }
-      { isExpanded && listInfo.items && renderList() }
-      {/* -- is list Item-- */}
-    </List>
-  );
+			return childList.map(
+				(subList) => <ListContainer listInfo={subList} parent={subList.id} />
+			);
+		}
+	}
+
+	return (
+		<List component="nav" aria-label="Main mailbox folders">
+			<ListRowItem
+				listInfo={listInfo}
+				isExpanded={isExpanded}
+				handleExpand={handleExpand}
+			/>
+			{
+				// render child list
+				isExpanded && renderList()
+			}
+		</List>
+	);
 }
 
-export function ListHeaderItem({ headerName, handleExpand, isExpanded }) {
+export function ListRowItem({ listInfo, handleExpand, isExpanded }) {
 
-  const [isEditing, toggleEditing] = useState(false);
-  const { list } = useContext(ListContext);
-  const { setItemToDelete } = useContext(DeleteContext);
+	const { name: headerName, items, id } = listInfo;
+	const { list, editList } = useContext(ListContext);
 
-  // console.log('has parent??' , parent)
+	const { setItemToDelete } = useContext(DeleteContext);
+	const [isEditing, toggleEditing] = useState(false);
 
-  const toggleEdit = () => {
-    toggleEditing(!isEditing);
-  };
+	const toggleEdit = () => {
+		toggleEditing(!isEditing);
+	};
 
-  const handleDelete = () => {
-    const indexToDelete = list.findIndex(item => item.name === headerName);
-    // setItemToDelete([indexToDelete, 'items', 0, 'items', 2]);
-    setItemToDelete([indexToDelete]);
-  };
+	const handleDelete = () => {
+		const indexToDelete = list.findIndex(item => item.id === id);
+		setItemToDelete(indexToDelete);
+	};
 
-  return (
-    <ListItem
-      button={!isEditing}
-      onClick={!isEditing ? handleExpand : null}
-    >
-      <ListItemIcon>
-        <IconButton
-          aria-label="More"
-          aria-controls="long-menu"
-          aria-haspopup="true"
-        >
-          {!isExpanded && <ExpandMore />}
-          {isExpanded && <ExpandLess />}
-        </IconButton>
-      </ListItemIcon>
-      {
-        isEditing &&
-        <ListItemEditor
-          name={headerName}
-          close={ () => toggleEditing(false)}
-        />
-      }
-      {
-        !isEditing && <ListItemText primary={headerName} />
-      }
-      <ListItemSecondaryAction>
-        <ListHeaderOptions
-          handleEdit={toggleEdit}
-          handleDelete={handleDelete}
-        />
-      </ListItemSecondaryAction>
-    </ListItem>
-  )
+	const handleAddItem = (parent) => {
+		const newList = [...list];
+		const lastItem = newList[ newList.length -1 ];
+		const newItemId = parseInt(lastItem.id) + 1;
+		const newItem = {
+			id: newItemId,
+			name: 'new item',
+			parent: parent.id,
+			items: []
+		}
+
+		const parentItemIndex = newList.findIndex(item => item.id === parent.id );
+		newList[parentItemIndex].items.push(newItemId)
+
+		newList.push(newItem);
+		handleExpand(true);
+		editList(newList);
+	}
+
+	const showExpandable = !isEditing && !!items && items.length > 0;
+
+	return (
+		<ListItem
+			className="list-row__item"
+			button={showExpandable}
+			onClick={showExpandable ? handleExpand : null}
+		>
+			{
+				showExpandable &&
+				<ListItemIcon>
+					{!isExpanded ? <ExpandMore /> : <ExpandLess />}
+				</ListItemIcon>
+			}
+			{
+				// show editor
+				isEditing &&
+				<ListItemEditor
+					item={listInfo}
+					close={() => toggleEditing(false)}
+				/>
+			}
+			{
+				// not editing
+				!isEditing && <ListItemText primary={headerName} />
+			}
+			<ListItemSecondaryAction>
+				<ListHeaderOptions
+					handleEdit={toggleEdit}
+					handleDelete={handleDelete}
+					handleAddItem={handleAddItem}
+					parent={listInfo}
+				/>
+			</ListItemSecondaryAction>
+		</ListItem>
+	)
 }

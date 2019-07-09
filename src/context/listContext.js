@@ -19,7 +19,7 @@ export const initialState = {
       name: 'Buy',
       items: [7, 8, 9],
       parent: 1
-    }, 
+    },
     {
       id: 4,
       name: 'Pay',
@@ -41,43 +41,51 @@ export const initialState = {
     {
       id: 7,
       name: 'apples',
-      parent: 3
+			items: [],
+			parent: 3,
     },
     {
       id: 8,
       name: 'oranges',
-      parent: 3
+			items: [],
+			parent: 3,
     },
     {
       id: 9,
       name: 'soap',
-      parent: 3
+			items: [],
+			parent: 3,
     },
     {
       id: 10,
       name: 'Internet Service',
-      parent: 4
+			items: [],
+			parent: 4,
     },
     {
       id: 11,
       name: 'The Beatles',
-      parent: 5
+			items: [],
+			parent: 5,
     },
     {
       id: 12,
       name: 'The Doors',
-      parent: 5
+			items: [],
+			parent: 5,
     },
     {
       id: 13,
       name: 'AC DC',
-      parent: 5
+			items: [],
+			parent: 5,
     },
     {
-      id: 13,
+      id: 14,
       name: 'Queen',
-      parent: 6
-    }  
+			items: [],
+			parent: 6,
+    }
   ],
   editListItem: () => {}
 };

@@ -5,17 +5,17 @@ import { ListContext } from '../../context/listContext';
 import { Input } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 
-export function ListItemEditor({ name, close }) {
+export function ListItemEditor({ item, close }) {
 
   const { list, editList } = useContext(ListContext);
-  const [nameValue, setHeaderName] = useState(name);
+  const [nameValue, setHeaderName] = useState(item.name);
 
   const handleOnChange = (event) => {
     setHeaderName(event.target.value);
   }
 
   const handleAccept = () => {
-    const itemToEdit = list.findIndex(item => item.name === name);
+    const itemToEdit = list.findIndex(itemFound => itemFound.id === item.id);
     const newList = [...list];
     newList[itemToEdit].name = nameValue;
     editList(newList)
@@ -33,7 +33,8 @@ export function ListItemEditor({ name, close }) {
         className={'list-header__input'}
         inputProps={{
           'aria-label': 'Item Name',
-        }}
+				}}
+				autoFocus={true}
       />
       <IconButton
         aria-label="Accept"
